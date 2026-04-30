@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Afsana-র জন্য 🌹</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&family=Great+Vibes&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hind Siliguri',sans-serif;background:#080010;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+
+/* ── Stars ── */
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* ── Petals ── */
+.petal{position:fixed;top:-50px;pointer-events:none;z-index:1;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg) scale(.3);opacity:0}}
+
+/* ── Main stage ── */
+.stage{position:relative;z-index:10;width:min(420px,96vw);text-align:center}
+
+/* ═══════════════
+   STAGE 1 — ENVELOPE
+═══════════════ */
+#env-stage{}
+
+.envelope-wrap{
+  position:relative;width:300px;height:220px;margin:0 auto 2rem;
+  cursor:pointer;
+}
+
+/* envelope body */
+.env-body{
+  width:100%;height:100%;
+  background:linear-gradient(160deg,#2a0030,#1a0020);
+  border-radius:12px 12px 14px 14px;
+  border:2px solid rgba(255,133,161,.35);
+  position:absolute; bottom:0;
+  box-shadow:0 0 50px rgba(255,77,109,.25),inset 0 0 40px rgba(255,77,109,.06);
+  overflow:hidden;
+}
+.env-body::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,133,161,.06) 0%,transparent 60%);
+}
+
+/* envelope flap */
+.env-flap{
+  position:absolute;top:0;left:0;width:100%;height:50%;
+  z-index:2;
+  background:linear-gradient(170deg,#3a0040,#220030);
+  border-radius:12px 12px 0 0;
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  border-bottom:none;
+  transform-origin:top center;
+  transition:transform .8s cubic-bezier(.4,0,.2,1);
+  border:2px solid rgba(255,133,161,.25);
+  box-shadow:0 4px 20px rgba(0,0,0,.4);
+}
+.envelope-wrap.open .env-flap{transform:rotateX(-180deg);}
+
+/* decorative lines on body */
+.env-lines{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(135deg,transparent 48%,rgba(255,133,161,.08) 49%,rgba(255,133,161,.08) 51%,transparent 52%),
+    linear-gradient(225deg,transparent 48%,rgba(255,133,161,.08) 49%,rgba(255,133,161,.08) 51%,transparent 52%);
+}
+
+/* lock */
+.lock{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:2.6rem;z-index:3;
+  animation:lock-pulse 2s ease-in-out infinite;
+  filter:drop-shadow(0 0 12px rgba(244,196,48,.8));
+  transition:all .4s;
+}
+@keyframes lock-pulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.12)}}
+.envelope-wrap.open .lock{opacity:0;transform:translate(-50%,-50%) scale(0)}
+
+.env-label{
+  font-size:.8rem;letter-spacing:3px;
+  color:rgba(255,255,255,.4);
+  margin-top:.5rem;
+  animation:blink 2s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* ═══════════════
+   STAGE 2 — MINI GAME
+═══════════════ */
+#game-stage{display:none}
+
+.game-title{font-size:1.1rem;color:#ff85a1;margin-bottom:.4rem;font-weight:600}
+.game-sub  {font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:1.5rem;letter-spacing:1px}
+
+.game-area{
+  position:relative;width:300px;height:220px;margin:0 auto;
+  background:linear-gradient(135deg,rgba(255,77,109,.08),rgba(106,5,114,.15));
+  border:1px solid rgba(255,133,161,.25);border-radius:20px;overflow:hidden;
+}
+
+.heart-target{
+  position:absolute;font-size:1.8rem;cursor:pointer;
+  transition:transform .1s;user-select:none;
+  animation:float-heart 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 8px rgba(255,77,109,.7));
+}
+.heart-target:hover{transform:scale(1.3)}
+@keyframes float-heart{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-8px) rotate(5deg)}}
+
+.game-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  margin:1rem auto 0;width:300px;
+}
+.hearts-caught{display:flex;gap:.3rem;font-size:1.1rem}
+.game-timer{font-size:.85rem;color:rgba(255,255,255,.5);letter-spacing:1px}
+
+.prog-wrap{width:300px;height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin:.8rem auto 0}
+.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#ff4d6d,#f4c430);width:0%;transition:width .3s}
+
+.fail-msg{display:none;color:#ff4d6d;font-size:.85rem;margin-top:.8rem}
+
+/* ═══════════════
+   STAGE 3 — REVEAL
+═══════════════ */
+#reveal-stage{display:none}
+
+.reveal-env{
+  position:relative;width:300px;height:220px;margin:0 auto;
+}
+.rev-body{
+  width:100%;height:100%;
+  background:linear-gradient(160deg,#2a0030,#1a0020);
+  border-radius:12px;
+  border:2px solid rgba(255,133,161,.5);
+  position:absolute;bottom:0;
+  box-shadow:0 0 60px rgba(255,77,109,.4);
+}
+.rev-flap{
+  position:absolute;top:0;left:0;width:100%;height:50%;z-index:2;
+  background:linear-gradient(170deg,#3a0040,#220030);
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  transform-origin:top center;
+  animation:open-flap .8s .3s cubic-bezier(.4,0,.2,1) forwards;
+  border:1px solid rgba(255,133,161,.25);
+}
+@keyframes open-flap{to{transform:rotateX(-180deg)}}
+
+/* photo rising out */
+.photo-rise{
+  position:absolute;bottom:30px;left:50%;transform:translateX(-50%) translateY(100%);
+  z-index:5;
+  animation:rise-up 1s .9s cubic-bezier(.175,.885,.32,1.275) forwards;
+}
+@keyframes rise-up{to{transform:translateX(-50%) translateY(-30%)}}
+
+.photo-circle{
+  width:90px;height:90px;border-radius:50%;overflow:hidden;
+  border:3px solid #f4c430;
+  box-shadow:0 0 30px rgba(244,196,48,.6),0 0 60px rgba(255,77,109,.3);
+  margin:0 auto;
+}
+.photo-circle img{width:100%;height:100%;object-fit:cover}
+
+/* name appearing */
+.her-name{
+  font-family:'Great Vibes',cursive;
+  font-size:2rem;color:#f4c430;
+  margin-top:1.5rem;
+  opacity:0;animation:fade-in 1s 1.8s forwards;
+  filter:drop-shadow(0 0 12px rgba(244,196,48,.6));
+}
+@keyframes fade-in{to{opacity:1}}
+
+.her-name-sub{
+  font-size:.8rem;letter-spacing:3px;color:rgba(255,255,255,.5);
+  margin-top:.3rem;
+  opacity:0;animation:fade-in .8s 2.2s forwards;
+}
+.next-btn{
+  display:inline-block;margin-top:1.6rem;
+  background:linear-gradient(135deg,#ff4d6d,#c9184a);
+  border:none;border-radius:50px;padding:.75rem 2.2rem;
+  color:#fff;font-size:1rem;font-weight:600;font-family:'Hind Siliguri',sans-serif;
+  cursor:pointer;box-shadow:0 0 24px rgba(255,77,109,.5);transition:.3s;
+  opacity:0;animation:fade-in .8s 2.6s forwards;
+}
+.next-btn:hover{transform:scale(1.07);box-shadow:0 0 45px rgba(255,77,109,.8)}
+
+/* ═══════════════
+   STAGE 4 — WISHES
+═══════════════ */
+#wish-stage{display:none}
+
+.wish-card{
+  background:linear-gradient(135deg,rgba(255,77,109,.1),rgba(106,5,114,.2));
+  border:1px solid rgba(255,133,161,.3);border-radius:24px;
+  padding:2.2rem 1.8rem;max-width:360px;margin:0 auto;
+  position:relative;overflow:hidden;
+  animation:slide-in .6s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes slide-in{from{transform:translateY(40px) scale(.9);opacity:0}to{transform:none;opacity:1}}
+
+.wish-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);
+}
+.wish-emoji{font-size:2.8rem;margin-bottom:.7rem;display:block;animation:hb 1.2s ease-in-out infinite}
+@keyframes hb{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.wish-bn{
+  font-size:1.05rem;line-height:2;color:rgba(255,255,255,.9);
+  margin-bottom:1rem;
+}
+.wish-bn strong{color:#f4c430}
+.wish-nav{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:1rem}
+.w-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:.3s;cursor:pointer}
+.w-dot.active{background:#ff4d6d;box-shadow:0 0 8px rgba(255,77,109,.7)}
+.wish-next{
+  background:linear-gradient(135deg,#ff4d6d,#c9184a);
+  border:none;border-radius:50px;padding:.6rem 1.8rem;
+  color:#fff;font-size:.9rem;font-weight:600;font-family:'Hind Siliguri',sans-serif;
+  cursor:pointer;box-shadow:0 0 18px rgba(255,77,109,.4);transition:.3s;
+}
+.wish-next:hover{transform:scale(1.06);box-shadow:0 0 35px rgba(255,77,109,.7)}
+
+.final-heart{
+  font-size:3.5rem;
+  animation:hb 1s ease-in-out infinite;
+  display:block;margin:1rem 0 .5rem;
+}
+
+/* ── Fireworks ── */
+#fw{position:fixed;inset:0;z-index:998;pointer-events:none}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<canvas id="fw"></canvas>
+
+<div class="stage">
+
+  <!-- ── STAGE 1: Locked Envelope ── -->
+  <div id="env-stage">
+    <p style="font-size:.8rem;letter-spacing:3px;color:rgba(255,255,255,.4);margin-bottom:1.5rem">✨ তোমার জন্য একটি বিশেষ উপহার ✨</p>
+
+    <div class="envelope-wrap" id="envelope" onclick="openEnvelope()">
+      <div class="env-flap"></div>
+      <div class="env-body">
+        <div class="env-lines"></div>
+      </div>
+      <div class="lock" id="lock">🔒</div>
+    </div>
+
+    <p class="env-label">ট্যাপ করো — ভেতরে কী আছে দেখো!</p>
+  </div>
+
+  <!-- ── STAGE 2: Mini Game ── -->
+  <div id="game-stage">
+    <div class="game-title">💕 হৃদয় ধরো, লক খোলো!</div>
+    <div class="game-sub">১০ সেকেন্ডে ৫টি হৃদয় ক্লিক করো</div>
+
+    <div class="game-area" id="gameArea"></div>
+
+    <div class="game-bar">
+      <div class="hearts-caught" id="caughtRow"></div>
+      <div class="game-timer" id="timer">⏱ 10s</div>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="progFill"></div></div>
+    <div class="fail-msg" id="failMsg">😢 আবার চেষ্টা করো! <button onclick="startGame()" style="background:none;border:1px solid #ff4d6d;color:#ff85a1;padding:.25rem .8rem;border-radius:20px;cursor:pointer;font-family:inherit;margin-left:.5rem">আবার</button></div>
+  </div>
+
+  <!-- ── STAGE 3: Photo Reveal ── -->
+  <div id="reveal-stage">
+    <div class="reveal-env">
+      <div class="rev-flap"></div>
+      <div class="rev-body"></div>
+      <div class="photo-rise">
+        <div class="photo-circle">
+          <!-- Replace src with real photo later -->
+          <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Afsana&backgroundColor=b6e3f4,c0aede,d1d4f9&radius=50" alt="Afsana"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="her-name">Afsana Jahidi</div>
+    <div class="her-name-sub">আমার সবচেয়ে প্রিয় মানুষ</div>
+
+    <button class="next-btn" onclick="showWishes()">🎁 উপহার খোলো →</button>
+  </div>
+
+  <!-- ── STAGE 4: Wishes ── -->
+  <div id="wish-stage">
+    <div class="wish-card" id="wishCard">
+      <!-- filled by JS -->
+    </div>
+    <div class="wish-nav" id="wishNav"></div>
+  </div>
+
+</div>
+
+<script>
+/* ── Stars ── */
+!function(){
+  const c=document.getElementById('stars'),x=c.getContext('2d');
+  const r=()=>{c.width=innerWidth;c.height=innerHeight};
+  let s=[];
+  const mk=()=>{s=[];for(let i=0;i<180;i++)s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.4+.2,a:Math.random(),d:(Math.random()*.005+.001)*(Math.random()>.5?1:-1)})};
+  const draw=()=>{x.clearRect(0,0,c.width,c.height);s.forEach(p=>{p.a+=p.d;if(p.a<=0||p.a>=1)p.d*=-1;x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle=`rgba(255,255,255,${Math.max(0,Math.min(1,p.a))})`;x.fill()});requestAnimationFrame(draw)};
+  r();mk();draw();addEventListener('resize',()=>{r();mk()});
+}();
+
+/* ── Petals ── */
+!function(){
+  const em=['🌹','🌸','💕','✨','🌷','💖'];
+  const sp=()=>{const e=document.createElement('div');e.className='petal';e.textContent=em[~~(Math.random()*em.length)];e.style.cssText=`left:${Math.random()*100}vw;animation-duration:${Math.random()*8+6}s;animation-delay:${Math.random()*6}s;font-size:${Math.random()+.9}rem;`;document.body.appendChild(e);setTimeout(()=>e.remove(),15e3)};
+  for(let i=0;i<18;i++)sp();setInterval(sp,2e3);
+}();
+
+/* ── Fireworks ── */
+const fwC=document.getElementById('fw');const fwX=fwC.getContext('2d');
+const rz=()=>{fwC.width=innerWidth;fwC.height=innerHeight};rz();addEventListener('resize',rz);
+let pts=[],fwOn=false,fwT;
+const rc=()=>['#ff4d6d','#f4c430','#ff85a1','#e9c6f7','#fff','#ffd700','#ff69b4'][~~(Math.random()*7)];
+const burst=(x,y)=>{for(let i=0;i<70;i++){const a=Math.PI*2*i/70,sp=Math.random()*6+2;pts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,a:1,c:rc(),r:Math.random()*3+1.5,d:Math.random()*.014+.008})}};
+const fwLoop=()=>{if(!fwOn)return;fwX.clearRect(0,0,fwC.width,fwC.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.09;p.a-=p.d;fwX.save();fwX.globalAlpha=Math.max(0,p.a);fwX.beginPath();fwX.arc(p.x,p.y,p.r,0,Math.PI*2);fwX.fillStyle=p.c;fwX.fill();fwX.restore()});pts=pts.filter(p=>p.a>0);requestAnimationFrame(fwLoop)};
+const fireworks=(n=6)=>{fwOn=true;clearTimeout(fwT);for(let i=0;i<n;i++)setTimeout(()=>burst(Math.random()*fwC.width*.8+fwC.width*.1,Math.random()*fwC.height*.45+60),i*300);fwLoop();fwT=setTimeout(()=>{fwOn=false;fwX.clearRect(0,0,fwC.width,fwC.height)},5e3)};
+
+/* ── STAGE 1 → 2 ── */
+function openEnvelope(){
+  document.getElementById('envelope').classList.add('open');
+  document.getElementById('lock').textContent='🔓';
+  setTimeout(()=>{
+    document.getElementById('env-stage').style.display='none';
+    document.getElementById('game-stage').style.display='block';
+    startGame();
+  },900);
+}
+
+/* ── MINI GAME ── */
+let caught=0,total=5,timeLeft=10,gameTimer,heartTimers=[];
+
+function startGame(){
+  caught=0;timeLeft=10;
+  document.getElementById('caughtRow').innerHTML='';
+  document.getElementById('failMsg').style.display='none';
+  document.getElementById('progFill').style.width='0%';
+  document.getElementById('gameArea').innerHTML='';
+  heartTimers.forEach(clearTimeout);heartTimers=[];
+  showHeart();
+  gameTimer=setInterval(()=>{
+    timeLeft--;
+    document.getElementById('timer').textContent=`⏱ ${timeLeft}s`;
+    document.getElementById('progFill').style.width=`${(10-timeLeft)/10*100}%`;
+    if(timeLeft<=0){clearInterval(gameTimer);gameFail()}
+  },1000);
+}
+
+function showHeart(){
+  if(caught>=total)return;
+  const area=document.getElementById('gameArea');
+  const h=document.createElement('div');
+  h.className='heart-target';
+  const em=['❤️','💕','💗','💖','💝'][~~(Math.random()*5)];
+  h.textContent=em;
+  const maxX=area.clientWidth-40,maxY=area.clientHeight-40;
+  h.style.left=Math.random()*maxX+'px';
+  h.style.top =Math.random()*maxY+'px';
+  h.onclick=(e)=>{
+    e.stopPropagation();
+    h.style.transform='scale(2)';
+    h.style.opacity='0';
+    setTimeout(()=>h.remove(),300);
+    caught++;
+    const r=document.getElementById('caughtRow');
+    r.innerHTML+='❤️';
+    if(caught>=total){clearInterval(gameTimer);gameWin()}
+    else{const t=setTimeout(showHeart,400);heartTimers.push(t)}
+  };
+  area.appendChild(h);
+  // auto-remove if not clicked in 2.5s
+  const t=setTimeout(()=>{ if(h.parentNode){h.remove();showHeart()} },2500);
+  heartTimers.push(t);
+}
+
+function gameWin(){
+  heartTimers.forEach(clearTimeout);
+  document.getElementById('gameArea').innerHTML='<div style="font-size:3rem;margin:auto;padding-top:3.5rem">🔓✨</div>';
+  setTimeout(()=>{
+    document.getElementById('game-stage').style.display='none';
+    document.getElementById('reveal-stage').style.display='block';
+    fireworks(5);
+  },900);
+}
+
+function gameFail(){
+  heartTimers.forEach(clearTimeout);
+  document.getElementById('gameArea').innerHTML='';
+  document.getElementById('failMsg').style.display='block';
+}
+
+/* ── STAGE 4: WISHES ── */
+const wishes=[
+  {em:'🌹',text:'<strong>Afsana,</strong><br/>আজ তোমার জন্মদিন —<br/>পৃথিবীর সবচেয়ে সুন্দর দিন,<br/>কারণ তুমি এই পৃথিবীতে এসেছ।'},
+  {em:'💫',text:'তোমার হাসি যেন সবসময়<br/>এভাবেই থাকে —<br/><strong>উজ্জ্বল, নিখুঁত, অসাধারণ।</strong>'},
+  {em:'🌸',text:'২০১৩ থেকে আজ —<br/>তুমি আমার সবচেয়ে<br/>বিশ্বস্ত, প্রিয় বন্ধু।<br/><strong>চিরকাল তেমনই থেকো।</strong>'},
+  {em:'🎂',text:'<strong>শুভ জন্মদিন, Afsana!</strong><br/>জীবনের প্রতিটা দিন যেন<br/>তোমার জন্য ফুলে ফুলে<br/>সুগন্ধময় হয়ে ওঠে।'},
+  {em:'❤️',text:'তুমি থাকলে<br/>পৃথিবী সুন্দর লাগে —<br/><strong>এটাই সবচেয়ে বড় সত্য।</strong><br/>ভালোবাসা রইলো। 🌹'}
+];
+let wi=0;
+
+function showWishes(){
+  document.getElementById('reveal-stage').style.display='none';
+  document.getElementById('wish-stage').style.display='block';
+  wi=0;
+  buildNav();
+  renderWish();
+  fireworks(4);
+}
+
+function buildNav(){
+  const n=document.getElementById('wishNav');
+  n.innerHTML='';
+  wishes.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='w-dot'+(i===0?' active':'');
+    d.onclick=()=>{wi=i;renderWish();updateDots()};
+    n.appendChild(d);
+  });
+  const btn=document.createElement('button');
+  btn.className='wish-next';
+  btn.textContent='পরবর্তী →';
+  btn.onclick=nextWish;
+  n.appendChild(btn);
+}
+
+function renderWish(){
+  const w=wishes[wi];
+  const c=document.getElementById('wishCard');
+  c.innerHTML=`<span class="wish-emoji">${w.em}</span><div class="wish-bn">${w.text}</div>`;
+  if(wi===wishes.length-1){
+    c.innerHTML+=`<span class="final-heart">💕</span><p style="font-size:.75rem;letter-spacing:2px;color:rgba(255,255,255,.35)">WITH ALL MY HEART • ২০২৬</p>`;
+  }
+  // re-trigger animation
+  c.style.animation='none';
+  c.offsetHeight;
+  c.style.animation='slide-in .5s cubic-bezier(.175,.885,.32,1.275)';
+  updateDots();
+}
+
+function updateDots(){
+  document.querySelectorAll('.w-dot').forEach((d,i)=>d.classList.toggle('active',i===wi));
+}
+
+function nextWish(){
+  if(wi<wishes.length-1){wi++;renderWish();if(wi%2===0)fireworks(2)}
+  else{wi=0;renderWish()}
+}
+</script>
+</body>
+</html>
